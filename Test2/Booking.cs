@@ -16,8 +16,8 @@ namespace Test2.Booking
         [Range(1, 10)]
         public int NumberOfPersons { get; set; }
         public DateTime Date = DateTime.Today;
-        public int Timeslot { get; set; }
-        public int DrinkId { get; set; }
+        public int? Timeslot { get; set; }
+        public int? DrinkId { get; set; }
         public string Dish { get; set; }
         public string Status { get; set; }
 
@@ -37,31 +37,6 @@ namespace Test2.Booking
             Status = "Accepted";
         }
 
-        public void ChangeDate(DateTime date)
-        {
-            Date = date;
-        }
-
-        public Task ChangePersons(int numberOfPersons)
-        {
-            NumberOfPersons = numberOfPersons;
-            return Task.CompletedTask;
-        }
-
-        public void ChangeTimeslot(int timeslot)
-        {
-            Timeslot = timeslot;
-        }
-
-        public void ChangeDrink(int drinkId)
-        {
-            DrinkId = drinkId;
-        }
-        public void ChangeDish(string dish)
-        {
-            Dish = dish;
-        }
-
         public Booking BookingFromDb(int id)
         {
             using var context = new Model();
@@ -72,49 +47,98 @@ namespace Test2.Booking
             booking.Status = dbObject.Status;
             return booking;
         }
+
+        public int PersonsToTables(int persons)
+        {
+            int tables = persons / 2;
+            return tables;
+        }
         public void SaveBooking()
         {
             using var context = new Model();
             var dbObject = new BookingTable
             {
                 Email = Mail,
-                ReservedTables = NumberOfPersons,
+                ReservedTables = PersonsToTables(NumberOfPersons),
                 ReservationDate = Date,
-                Timeslot = Timeslot,
-                DrinkId = DrinkId,
+                Timeslot = (int)Timeslot,
+                DrinkId = (int)DrinkId,
                 Dish = Dish
             };
             context.Add(dbObject);
             context.SaveChanges();
         }
 
-        public void ReservationLock(string mail, DateTime reservationDate, int timeslot, int persons)
+        public void TimeslotSelected()
         {
+            UnlockReservation();
 
+            int[] availableSeats = GetAvailableSeats();
+
+            if (availableSeats[(int)Timeslot] <= NumberOfPersons)
+            {
+                ReservationLock();
+            } else
+            {
+                throw new Exception("not enough seats available at the selected timslot");
+            }
         }
 
-        public void GetAvailableSeats(DateTime date)
+        public void ConfirmBooking()
+        {
+            SaveBooking();
+            UnlockReservation();
+        }
+
+        public void ReservationLock()
         {
             using var context = new Model();
-            var query = from ts in context.Bookings
-                        where ts.ReservationDate.Date == date.Date
-                        select ts.Timeslot;
-            var booked = context.Bookings.Where(
-                ts => ts.ReservationDate.Date == date.Date)
-                .Select(ts => new
+            var dbObject = new ReservationLock
             {
-                Time = ts.Timeslot,
-                Number = ts.ReservedTables
-            }).ToList();
-            var locked = context.ReservationLocks.Where(
-                ts => ts.ReservationDate.Date == date.Date && 
-                ts.LockTime.AddMinutes(5) == DateTime.Now && 
-                ts.Status == "Active")
-                .Select(ts => new
+                Email = Mail,
+                ReservedTables = PersonsToTables(NumberOfPersons),
+                ReservationDate = Date,
+                Timeslot = (int)Timeslot,
+                LockTime = DateTime.Now,
+                Status = "Active"
+            };
+            context.Add(dbObject);
+            context.SaveChanges();
+        }
+
+        public void UnlockReservation()
+        {
+            using var context = new Model();
+            var query = from rl in context.ReservationLocks
+                        where rl.Email == Mail
+                        select rl;
+            context.ReservationLocks.RemoveRange(query);
+        }
+
+        public int[] GetAvailableSeats()
+        {
+            int[] availableSeats = new int[3];
+            using var context = new Model();
+
+            for(int i = 0; i < availableSeats.Length; i++)
             {
-                Time = ts.Timeslot,
-                Number = ts.ReservedTables
-            }).ToList();
+                int booked = context.Bookings.Where(
+                ts => ts.ReservationDate.Date == Date.Date && 
+                ts.Timeslot == i)
+                .Sum(n => n.ReservedTables);
+
+                int locked = context.ReservationLocks.Where(
+                ts => ts.ReservationDate.Date == Date.Date &&
+                ts.LockTime.AddMinutes(5) == DateTime.Now &&
+                ts.Status == "Active" &&
+                ts.Timeslot == i)
+                .Sum(n => n.ReservedTables);
+
+                int available = 10 - booked - locked;
+                availableSeats[i] = 2*available;
+            }
+
+            return availableSeats;
         }
     }
 }

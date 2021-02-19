@@ -4,9 +4,7 @@
 <h3>Reservation</h3>
 
 <div>@booking.Mail, @booking.Date, @booking.NumberOfPersons, @booking.Timeslot, @booking.DrinkId, @booking.Dish</div>
-<div>
-    <button class="btn btn-primary" @onclick="SaveReservation">Click me</button>
-</div>
+
 <EditForm Model="@booking" OnValidSubmit="FirstValidation">
     <DataAnnotationsValidator />
     <ValidationSummary />
@@ -22,7 +20,7 @@
     <label>
         Number of People:
         <InputNumber @bind-Value="booking.NumberOfPersons" />
-    </label>    
+    </label>
     <div class="row content">
         <button type="submit">Submit</button>
     </div>
@@ -34,7 +32,21 @@
         <ValidationSummary />
         <label>
             Time Interval:
-            <InputNumber @bind-Value="booking.Timeslot" />
+            <InputSelect @bind-Value="booking.Timeslot" @onchange="booking.ReservationLock">
+                <option value="">Select Time</option>
+                @if (availableSeats[0] >= booking.NumberOfPersons)
+                    {
+                    <option value="0">16-18</option>
+                    }
+                @if (availableSeats[1] >= booking.NumberOfPersons)
+                    {
+                    <option value="1">18-20</option>
+                    }
+                @if (availableSeats[2] >= booking.NumberOfPersons)
+                    {
+                    <option value="2">20-22</option>
+                    }
+            </InputSelect>
         </label>
         <label>
             Drink:
@@ -48,20 +60,57 @@
         <button type="submit">Submit</button>
     </EditForm>
 }
+@if (AllSet())
+{
+    <div>
+        <button class="btn btn-primary" @onclick="SaveReservation">Make Reservation</button>
+    </div>
+}
+<div>@availableSeats[0],@availableSeats[1],@availableSeats[2]</div>
 
-    @code {
-        public bool FirstValidated = false;
 
-        private Booking booking = new Booking();
+<div>
+    <button class="btn btn-primary" @onclick="GetDish">call dish</button>
+</div>
 
-        private void FirstValidation()
-        {
-            FirstValidated = true;
-        }
+@code{
+    private External external = new External();
 
-        public void SaveReservation()
-        {
-            booking.SaveBooking();
-        }
-
+    public void GetDish()
+    {
+        external.GetDish();
     }
+}
+
+@code {
+    public bool FirstValidated = false;
+
+    public bool AllSet()
+    {
+        bool set = booking.Timeslot.HasValue && booking.DrinkId.HasValue && booking.Dish.Length > 0;
+        return set;
+    }
+
+    private Booking booking = new Booking();
+
+    public int[] availableSeats = new int[3];
+
+    private void FirstValidation()
+    {
+        FirstValidated = true;
+        availableSeats = booking.GetAvailableSeats();
+    }
+
+    public void SaveReservation()
+    {
+        booking.SaveBooking();
+    }
+
+    public void GetAvailableSeats()
+    {
+        availableSeats = booking.GetAvailableSeats();
+    }
+
+
+
+}

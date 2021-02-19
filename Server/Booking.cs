@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using DbModel;
 using FluentAssertions.Common;
 
-namespace Booking
+namespace Server.Booking
 {
     public class Booking
     {
@@ -39,9 +39,10 @@ namespace Booking
             Date = date;
         }
 
-        public void ChangePersons(int numberOfPersons)
+        public Task ChangePersons(int numberOfPersons)
         {
             NumberOfPersons = numberOfPersons;
+            return Task.CompletedTask;
         }
 
         public void ChangeTimeslot(int timeslot)

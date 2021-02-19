@@ -1,0 +1,67 @@
+﻿@page "/Reservation"
+@using System.ComponentModel.DataAnnotations
+
+<h3>Reservation</h3>
+
+<div>@booking.Mail, @booking.Date, @booking.NumberOfPersons, @booking.Timeslot, @booking.DrinkId, @booking.Dish</div>
+<div>
+    <button class="btn btn-primary" @onclick="SaveReservation">Click me</button>
+</div>
+<EditForm Model="@booking" OnValidSubmit="FirstValidation">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <label>
+        Email:
+        <InputText @bind-Value="booking.Mail" />
+    </label>
+    <label>
+        Date:
+        <InputDate @bind-Value="booking.Date" />
+    </label>
+
+    <label>
+        Number of People:
+        <InputNumber @bind-Value="booking.NumberOfPersons" />
+    </label>    
+    <div class="row content">
+        <button type="submit">Submit</button>
+    </div>
+</EditForm>
+@if (FirstValidated)
+{
+    <EditForm Model="@booking">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <label>
+            Time Interval:
+            <InputNumber @bind-Value="booking.Timeslot" />
+        </label>
+        <label>
+            Drink:
+            <InputNumber @bind-Value="booking.DrinkId" />
+        </label>
+        <label>
+            Dish    :
+            <InputText @bind-Value="booking.Dish" />
+        </label>
+
+        <button type="submit">Submit</button>
+    </EditForm>
+}
+
+    @code {
+        public bool FirstValidated = false;
+
+        private Booking booking = new Booking();
+
+        private void FirstValidation()
+        {
+            FirstValidated = true;
+        }
+
+        public void SaveReservation()
+        {
+            booking.SaveBooking();
+        }
+
+    }

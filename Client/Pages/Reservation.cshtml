@@ -1,8 +1,44 @@
 ﻿@page
 @model Client.Pages.ReservationModel
 @{
-
+    @functions{
+        public string Test1()
+        {
+            Model.Mail = "noget";
+            return "Done";
+        }
+        public string Test2()
+        {
+            Model.Date = DateTime.Now;
+            return "Done";
+        }
+    }
 }
+
+<div>@Model.Mail, @Model.Date, @Model.Persons</div>
+
 <div>
+    <button type="button" class="btn btn-default" id="Test2">@Test1(), @Model.Mail, @Model.Date</button>
+
+    <button class="btn btn-default"></button>
+
+    <button class="btn btn-default"></button>
 
 </div>
+<div>@(Model.Mail), @Model.Date, @Model.Persons</div>
+
+@using (Html.BeginForm())
+{
+    <div>
+        Email: <input type="email" id="Email" value="">
+        <button>Register</button>
+    </div>
+}
+
+<script>
+    $(function () {
+        $("input#Test2").on('click', function () {
+            Model.Persons = 5;
+        });
+    });
+</script>

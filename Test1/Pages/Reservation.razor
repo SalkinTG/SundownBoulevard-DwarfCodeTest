@@ -1,0 +1,36 @@
+﻿@page "/Reservation"
+
+<h3>Reservation</h3>
+
+<div>@Mail, @Date, @Persons, @Timeslot, @Drink, @Dish</div>
+<div>
+    <button class="btn btn-primary" @onclick="SetData">Click me</button>
+</div>
+<div>
+    <button class="btn btn-primary" @onclick="SaveReservation">Click me</button>
+</div>
+
+@code {
+    private string Mail;
+    private DateTime Date;
+    private int Persons;
+    private int Timeslot;
+    private int Drink;
+    private string Dish;
+    private Booking booking;
+
+    public void SetData()
+    {
+        Mail = "a@b.c";
+        Date = DateTime.Now;
+        Persons = 5;
+        Timeslot = 1;
+        Drink = 1;
+        Dish = "Chokolade";
+    }
+
+    public async Task SaveReservation()
+    {
+        booking = new Booking();
+    }
+}

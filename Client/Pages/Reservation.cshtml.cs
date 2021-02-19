@@ -5,12 +5,25 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using Server.Booking;
 
 namespace Client.Pages
 {
     public class ReservationModel : PageModel
     {
-        public Booking.Booking newBooking;
+        public string Mail;
+        public int Persons;
+        public DateTime Date;
+        public int Timeslot;
+        public int Drink;
+        public string Dish;
+
+        public void SetData()
+        {
+            Mail = "a@b.c";
+        }
+
+        public Booking newBooking;
 
         public void OnGet()
         {
@@ -18,7 +31,7 @@ namespace Client.Pages
         }
         public void StartBooking()
         {
-            newBooking = new Booking.Booking();
+            newBooking = new Booking();
         }
 
         public void PickDate(DateTime date)

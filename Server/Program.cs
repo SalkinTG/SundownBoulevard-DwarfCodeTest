@@ -1,5 +1,5 @@
 ﻿using System;
-using Booking;
+using Server.Booking;
 
 namespace Server
 {

@@ -1,4 +1,4 @@
-﻿namespace Booking
+﻿namespace Server.Booking
 {
     public enum TimeSlots
     {

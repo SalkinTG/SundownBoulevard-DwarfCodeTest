@@ -14,10 +14,10 @@ namespace Test2.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Email = table.Column<string>(type: "TEXT", nullable: false),
-                    Date = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ReservationDate = table.Column<DateTime>(type: "TEXT", nullable: false),
                     Timeslot = table.Column<int>(type: "INTEGER", nullable: false),
-                    Persons = table.Column<int>(type: "INTEGER", nullable: false),
-                    Drink = table.Column<int>(type: "INTEGER", nullable: false),
+                    ReservedTables = table.Column<int>(type: "INTEGER", nullable: false),
+                    DrinkId = table.Column<int>(type: "INTEGER", nullable: false),
                     Dish = table.Column<string>(type: "TEXT", nullable: false),
                     Status = table.Column<string>(type: "TEXT", nullable: true, defaultValue: "active")
                 },
@@ -32,10 +32,12 @@ namespace Test2.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
+                    Email = table.Column<string>(type: "TEXT", nullable: true),
                     ReservationDate = table.Column<DateTime>(type: "TEXT", nullable: false),
                     Timeslot = table.Column<int>(type: "INTEGER", nullable: false),
-                    NumberOfPersons = table.Column<int>(type: "INTEGER", nullable: false),
-                    LockTime = table.Column<DateTime>(type: "TEXT", nullable: false)
+                    ReservedTables = table.Column<int>(type: "INTEGER", nullable: false),
+                    LockTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    Status = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {

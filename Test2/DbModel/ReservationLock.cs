@@ -7,7 +7,8 @@ namespace Test2.DbModel
 {
     public class ReservationLock
     {
-        public int Email { get; set; }
+        public int Id { get; set; }
+        public string Email { get; set; }
         public DateTime ReservationDate { get; set; }
         public int Timeslot { get; set; }
         public int ReservedTables { get; set; }

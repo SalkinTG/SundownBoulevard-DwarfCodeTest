@@ -9,8 +9,8 @@ using Test2.DbModel;
 namespace Test2.Migrations
 {
     [DbContext(typeof(Model))]
-    [Migration("20210219170713_StatusTo")]
-    partial class StatusTo
+    [Migration("20210219192032_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -24,21 +24,21 @@ namespace Test2.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Dish")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("Drink")
+                    b.Property<int>("DrinkId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("Persons")
+                    b.Property<DateTime>("ReservationDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("ReservedTables")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Status")
@@ -60,14 +60,17 @@ namespace Test2.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Email")
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTime>("LockTime")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("NumberOfPersons")
-                        .HasColumnType("INTEGER");
-
                     b.Property<DateTime>("ReservationDate")
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("ReservedTables")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Status")
                         .HasColumnType("TEXT");

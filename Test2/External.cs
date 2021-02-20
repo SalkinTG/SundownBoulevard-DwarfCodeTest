@@ -7,6 +7,8 @@ using System.Net.Http.Headers;
 using System.Net.Http.Formatting;
 using System.Data;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore;
+using Newtonsoft.Json.Linq;
 
 namespace Test2
 {
@@ -20,7 +22,14 @@ namespace Test2
         private const string DishUrl = "https://www.themealdb.com/api/json/v1/1/random.php";
         private string urlParameters = "?api_key=123";
 
-        public string GetDish()
+        public void GetDish()
+        {
+            var task = GetInfo().GetAwaiter().GetResult();
+            Dish = GetDishNameFromJson(task);
+        }
+
+
+        public static async Task<JObject> GetInfo()
         {
             HttpClient client = new HttpClient();
             client.BaseAddress = new Uri(DishUrl);
@@ -28,23 +37,31 @@ namespace Test2
 
             client.DefaultRequestHeaders.Accept.Add(
             new MediaTypeWithQualityHeaderValue("application/json"));
-            HttpResponseMessage response = new HttpResponseMessage();
+            HttpResponseMessage response;
 
-            response = await client.GetAsync("api/WebApi").ConfigureAwait(false);
+            response = client.GetAsync("").Result;
+            dynamic json = new JObject();
             if (response.IsSuccessStatusCode)
             {
+                string DishName;
                 string result = response.Content.ReadAsStringAsync().Result;
-                responseObj = JsonConvert.DeserializeObject<DataTable>(result);
-                var value = response.Content;
-                var dataObjects = response.Content.ReadAsAsync<JsonContractResolver>().Result;
-
-                return "success";
+                json = JsonConvert.DeserializeObject(result);
+                return json;
             }
-            else
+            return json;
+        }
+
+        public string GetDishNameFromJson(dynamic json)
+        {
+            string dishName = "";
+            foreach (var res in json.meals[0])
             {
-                return callFailed;
+                if(res.Name == "strMeal")
+                    {
+                        return res.Value.ToString();
+                    }
             }
-
+            return dishName;
         }
     }
 }

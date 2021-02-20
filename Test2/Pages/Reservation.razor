@@ -53,11 +53,13 @@
             <InputNumber @bind-Value="booking.DrinkId" />
         </label>
         <label>
-            Dish    :
-            <InputText @bind-Value="booking.Dish" />
+            Dish: @external.Dish 
+            <div>
+                <button class="btn btn-primary" @onclick="GetDish">call dish</button>
+                <button class="btn btn-primary" @onclick="SetDish" >Order dish</button>
+            </div>
         </label>
 
-        <button type="submit">Submit</button>
     </EditForm>
 }
 @if (AllSet())
@@ -66,12 +68,6 @@
         <button class="btn btn-primary" @onclick="SaveReservation">Make Reservation</button>
     </div>
 }
-<div>@availableSeats[0],@availableSeats[1],@availableSeats[2]</div>
-
-
-<div>
-    <button class="btn btn-primary" @onclick="GetDish">call dish</button>
-</div>
 
 @code{
     private External external = new External();
@@ -79,6 +75,11 @@
     public void GetDish()
     {
         external.GetDish();
+    }
+
+    public void SetDish()
+    {
+        booking.Dish = external.Dish;
     }
 }
 

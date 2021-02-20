@@ -16,7 +16,7 @@ namespace Test2.DbModel
         [Required]
         public int ReservedTables { get; set; }
         [Required]
-        public int DrinkId { get; set; }
+        public string DrinkId { get; set; }
         [Required]
         public string Dish { get; set; }
         public string Status { get; set; }

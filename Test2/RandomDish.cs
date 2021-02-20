@@ -12,28 +12,23 @@ using Newtonsoft.Json.Linq;
 
 namespace Test2
 {
-    public class External
+    public class RandomDish
     {
-        public string Dish;
-        public List<Tuple<int, string>> Drinks;
+        public string dish;
 
-        private string callFailed = "Unable to get dish";
-
-        private const string DishUrl = "https://www.themealdb.com/api/json/v1/1/random.php";
+        private const string dishUrl = "https://www.themealdb.com/api/json/v1/1/random.php";
         private string urlParameters = "?api_key=123";
 
         public void GetDish()
         {
             var task = GetInfo().GetAwaiter().GetResult();
-            Dish = GetDishNameFromJson(task);
+            dish = GetDishNameFromJson(task);
         }
-
 
         public static async Task<JObject> GetInfo()
         {
             HttpClient client = new HttpClient();
-            client.BaseAddress = new Uri(DishUrl);
-            DataTable responseObj = new DataTable();
+            client.BaseAddress = new Uri(dishUrl);
 
             client.DefaultRequestHeaders.Accept.Add(
             new MediaTypeWithQualityHeaderValue("application/json"));
@@ -43,7 +38,6 @@ namespace Test2
             dynamic json = new JObject();
             if (response.IsSuccessStatusCode)
             {
-                string DishName;
                 string result = response.Content.ReadAsStringAsync().Result;
                 json = JsonConvert.DeserializeObject(result);
                 return json;
@@ -53,7 +47,7 @@ namespace Test2
 
         public string GetDishNameFromJson(dynamic json)
         {
-            string dishName = "";
+            string DishName = "";
             foreach (var res in json.meals[0])
             {
                 if(res.Name == "strMeal")
@@ -61,7 +55,7 @@ namespace Test2
                         return res.Value.ToString();
                     }
             }
-            return dishName;
+            return DishName;
         }
     }
 }

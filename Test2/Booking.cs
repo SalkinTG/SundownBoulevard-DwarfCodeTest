@@ -11,13 +11,14 @@ namespace Test2.Booking
 {
     public class Booking
     {
+        public int Id { get; }
         [EmailAddress]
         public string Mail { get; set; }
         [Range(1, 10)]
         public int NumberOfPersons { get; set; }
         public DateTime Date = DateTime.Today;
         public int? Timeslot { get; set; }
-        public int? DrinkId { get; set; }
+        public string DrinkName { get; set; }
         public string Dish { get; set; }
         public string Status { get; set; }
 
@@ -26,13 +27,14 @@ namespace Test2.Booking
         }
 
 
-        public Booking(string mail, int numberOfPersons, DateTime date, int timeslot, int drinkId, string dish)
+        public Booking(int id, string mail, int numberOfPersons, DateTime date, int timeslot, string drinkId, string dish)
         {
+            Id = id;
             Mail = mail;
             NumberOfPersons = numberOfPersons;
             Date = date;
             Timeslot = timeslot;
-            DrinkId = drinkId;
+            DrinkName = drinkId;
             Dish = dish;
             Status = "Accepted";
         }
@@ -43,11 +45,23 @@ namespace Test2.Booking
             var dbObject = context.Bookings.Single(
                 b => b.Id == id
                 );
-            Booking booking = new Booking(dbObject.Email, dbObject.ReservedTables, dbObject.ReservationDate, dbObject.Timeslot, dbObject.DrinkId, dbObject.Dish);
+            int maxPersons = 2 * dbObject.ReservedTables;
+            Booking booking = new Booking(dbObject.Id, dbObject.Email, maxPersons, dbObject.ReservationDate, dbObject.Timeslot, dbObject.DrinkId, dbObject.Dish);
             booking.Status = dbObject.Status;
             return booking;
         }
+        public List<Booking> GetBookingsFromMail(string email)
+        {
+            List<Booking> bookings = new List<Booking>(0);
+            using var context = new Model();
+            List<int> ids = context.Bookings.Where(b => b.Email == email && b.Status == "active").Select(b => b.Id).ToList();
 
+            foreach (var id in ids)
+            {
+                bookings.Add(BookingFromDb(id));
+            }
+            return bookings;
+        }
         public int PersonsToTables(int persons)
         {
             int tables = persons / 2;
@@ -62,7 +76,7 @@ namespace Test2.Booking
                 ReservedTables = PersonsToTables(NumberOfPersons),
                 ReservationDate = Date,
                 Timeslot = (int)Timeslot,
-                DrinkId = (int)DrinkId,
+                DrinkId = DrinkName,
                 Dish = Dish
             };
             context.Add(dbObject);
@@ -75,7 +89,7 @@ namespace Test2.Booking
 
             int[] availableSeats = GetAvailableSeats();
 
-            if (availableSeats[(int)Timeslot] <= NumberOfPersons)
+            if (availableSeats[(int)Timeslot] >= NumberOfPersons)
             {
                 ReservationLock();
             } else

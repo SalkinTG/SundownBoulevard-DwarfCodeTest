@@ -1,0 +1,63 @@
+﻿@page "/Cancellation"
+
+
+<h3>Cancellation</h3>
+
+
+<EditForm Model="@cancelBooking" OnValidSubmit="Validation">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <label>
+        Email:
+        <InputText @bind-Value="cancelBooking.Email" />
+    </label>
+    <button type="submit">Submit</button>
+</EditForm>
+@if (bookings == null)
+{
+    <p><em>Input Email Adress:</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Number of Persons</th>
+                <th>Time Interval</th>
+                <th>Click to cancel</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var booking in bookings)
+            {
+            <tr>
+                <td>@booking.Date.ToShortDateString()</td>
+                <td>@booking.NumberOfPersons</td>
+                <td>@booking.Timeslot</td>
+                <td><button class="btn btn-primary" @onclick="(() => Cancel(booking.Id))">Cancel</button></td>
+            </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+@code {
+    private CancelBooking cancelBooking = new CancelBooking();
+    private List<Booking> bookings;
+    private int? bookingId;
+    private Booking tempBooking = new Booking();
+
+    public void Validation()
+    {
+        bookings = tempBooking.GetBookingsFromMail(cancelBooking.Email);
+    }
+
+    public void Cancel(int id)
+    {
+        cancelBooking.Cancel(id);
+        Validation();
+    }
+
+}

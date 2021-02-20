@@ -9,7 +9,7 @@ using Test2.DbModel;
 namespace Test2.Migrations
 {
     [DbContext(typeof(Model))]
-    [Migration("20210219192032_InitialCreate")]
+    [Migration("20210220053019_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -28,8 +28,9 @@ namespace Test2.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("DrinkId")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("DrinkId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Email")
                         .IsRequired()

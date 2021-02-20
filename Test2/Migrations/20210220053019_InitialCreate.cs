@@ -17,7 +17,7 @@ namespace Test2.Migrations
                     ReservationDate = table.Column<DateTime>(type: "TEXT", nullable: false),
                     Timeslot = table.Column<int>(type: "INTEGER", nullable: false),
                     ReservedTables = table.Column<int>(type: "INTEGER", nullable: false),
-                    DrinkId = table.Column<int>(type: "INTEGER", nullable: false),
+                    DrinkId = table.Column<string>(type: "TEXT", nullable: false),
                     Dish = table.Column<string>(type: "TEXT", nullable: false),
                     Status = table.Column<string>(type: "TEXT", nullable: true, defaultValue: "active")
                 },

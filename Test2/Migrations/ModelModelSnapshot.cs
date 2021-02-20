@@ -26,8 +26,9 @@ namespace Test2.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("DrinkId")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("DrinkId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Email")
                         .IsRequired()

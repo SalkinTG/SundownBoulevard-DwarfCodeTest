@@ -2,8 +2,6 @@
 
 <h3>Reservation</h3>
 
-<div>@booking.Mail, @booking.Date, @booking.NumberOfPersons, @booking.Timeslot, @booking.DrinkName, @booking.Dish</div>
-
 <EditForm Model="@booking" OnValidSubmit="FirstValidation">
     <DataAnnotationsValidator />
     <ValidationSummary />
@@ -88,9 +86,6 @@
         <button class="btn btn-primary" @onclick="SaveReservation">Make Reservation</button>
     </div>
 }
-<div>
-    <button class="btn btn-primary" @onclick="GetDrinks">call drinks</button>
-</div>
 
 @code{
     private RandomDish randomDish = new RandomDish();

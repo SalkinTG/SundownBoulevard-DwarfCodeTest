@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Net.Http.Formatting;
-using System.Data;
 using Newtonsoft.Json;
-using Microsoft.AspNetCore;
 using Newtonsoft.Json.Linq;
 
 namespace Test2
@@ -17,7 +12,6 @@ namespace Test2
         public string dish;
 
         private const string dishUrl = "https://www.themealdb.com/api/json/v1/1/random.php";
-        private string urlParameters = "?api_key=123";
 
         public void GetDish()
         {

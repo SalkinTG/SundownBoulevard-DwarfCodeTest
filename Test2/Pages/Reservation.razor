@@ -1,9 +1,8 @@
 ﻿@page "/Reservation"
-@using System.ComponentModel.DataAnnotations
 
 <h3>Reservation</h3>
 
-<div>@booking.Mail, @booking.Date, @booking.NumberOfPersons, @booking.Timeslot, @booking.DrinkId, @booking.Dish</div>
+<div>@booking.Mail, @booking.Date, @booking.NumberOfPersons, @booking.Timeslot, @booking.DrinkName, @booking.Dish</div>
 
 <EditForm Model="@booking" OnValidSubmit="FirstValidation">
     <DataAnnotationsValidator />
@@ -32,7 +31,7 @@
         <ValidationSummary />
         <label>
             Time Interval:
-            <InputSelect @bind-Value="booking.Timeslot" @onchange="booking.ReservationLock">
+            <InputSelect @bind-Value="timeslot">
                 <option value="">Select Time</option>
                 @if (availableSeats[0] >= booking.NumberOfPersons)
                     {
@@ -50,44 +49,104 @@
         </label>
         <label>
             Drink:
-            <InputNumber @bind-Value="booking.DrinkId" />
+            <select @bind="booking.DrinkName">
+                @if (availableDrinks != null)
+                {
+                    @foreach (var cnt in availableDrinks)
+                    {
+                        <option value="@cnt">@cnt</option>
+                    }
+                }
+            </select>
+            <div>
+                @if (page > 1)
+                {
+                    <button class="btn btn-primary" @onclick="PrevPage">previous page</button>
+                }
+                @if (drinks.GetDrinks(page + 1).Count > 0)
+                {
+                    <button class="btn btn-primary" @onclick="NextPage">next page</button>
+                }
+                </div>
         </label>
         <label>
-            Dish    :
-            <InputText @bind-Value="booking.Dish" />
+            Dish: @randomDish.dish 
+            <div>
+                <button class="btn btn-primary" @onclick="GetDish">call dish</button>
+                <button class="btn btn-primary" @onclick="SetDish" >Order dish</button>
+            </div>
         </label>
 
-        <button type="submit">Submit</button>
     </EditForm>
 }
 @if (AllSet())
 {
     <div>
+    
+    </div>
+    <div>
         <button class="btn btn-primary" @onclick="SaveReservation">Make Reservation</button>
     </div>
 }
-<div>@availableSeats[0],@availableSeats[1],@availableSeats[2]</div>
-
-
 <div>
-    <button class="btn btn-primary" @onclick="GetDish">call dish</button>
+    <button class="btn btn-primary" @onclick="GetDrinks">call drinks</button>
 </div>
 
 @code{
-    private External external = new External();
+    private RandomDish randomDish = new RandomDish();
+    private Drinks drinks = new Drinks();
+    private int page = 1;
+    private List<string> availableDrinks;
 
     public void GetDish()
     {
-        external.GetDish();
+        randomDish.GetDish();
+    }
+
+    public void SetDish()
+    {
+        booking.Dish = randomDish.dish;
+    }
+
+    public void GetDrinks()
+    {
+        availableDrinks = drinks.GetDrinks(page);
+    }
+
+    public void PrevPage()
+    {
+        page--;
+        GetDrinks();
+    }
+
+    public void NextPage()
+    {
+        page++;
+        GetDrinks();
     }
 }
 
 @code {
     public bool FirstValidated = false;
+    private int timeslotReal;
+    private int timeslot
+    {
+        get
+        {
+            return timeslotReal;
+        }
+        set
+        {
+            timeslotReal = value;
+            booking.Timeslot = timeslotReal;
+            booking.TimeslotSelected();
+        }
+    }
+
 
     public bool AllSet()
     {
-        bool set = booking.Timeslot.HasValue && booking.DrinkId.HasValue && booking.Dish.Length > 0;
+        bool set = booking.Timeslot.HasValue && !String.IsNullOrEmpty(booking.DrinkName) && !String.IsNullOrEmpty(booking.Dish);
         return set;
     }
 
@@ -99,11 +158,14 @@
     {
         FirstValidated = true;
         availableSeats = booking.GetAvailableSeats();
+        availableDrinks = drinks.GetDrinks(page);
     }
 
     public void SaveReservation()
     {
         booking.SaveBooking();
+        booking.Timeslot = null;
+        GetAvailableSeats();
     }
 
     public void GetAvailableSeats()
@@ -111,6 +173,10 @@
         availableSeats = booking.GetAvailableSeats();
     }
 
+    public void SelectTimeslot()
+    {
+        booking.TimeslotSelected();
+    }
 
 
 }
